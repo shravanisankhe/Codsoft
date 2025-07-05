@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Modern Calculator</title>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      padding: 0;
+      height: 100vh;
+      background: url('https://i.pinimg.com/736x/53/a2/8d/53a28d1a9cca33c6465c102d3c6fb9b0.jpg') no-repeat center center fixed;
+      background-size: cover;
+      background-color: #000;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      transition: background-color 0.3s ease;
+    }
+
+    .calculator {
+      background: rgba(0, 0, 0, 0.5);
+      backdrop-filter: blur(10px);
+      border-radius: 20px;
+      padding: 30px;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+      max-width: 320px;
+      width: 100%;
+      transition: background 0.3s ease;
+    }
+
+    #display {
+      width: 100%;
+      height: 60px;
+      font-size: 2em;
+      padding: 10px;
+      text-align: right;
+      border: none;
+      border-radius: 10px;
+      background: rgba(255, 255, 255, 0.2);
+      color: white;
+      margin-bottom: 20px;
+      outline: none;
+    }
+
+    .buttons {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 15px;
+    }
+
+    button {
+      height: 60px;
+      font-size: 1.3em;
+      border: none;
+      border-radius: 12px;
+      background: rgba(255, 255, 255, 0.15);
+      color: white;
+      cursor: pointer;
+      transition: transform 0.1s ease, background 0.2s ease;
+    }
+
+    button:hover {
+      background: rgba(255, 255, 255, 0.3);
+    }
+
+    button:active {
+      transform: scale(0.95);
+    }
+
+    .operator {
+      background: #ff9800;
+    }
+
+    .clear {
+      background: #f44336;
+      grid-column: span 2;
+    }
+
+    .equals {
+      background: #4caf50;
+      grid-column: span 2;
+    }
+
+    .mode-toggle {
+      background: #2196f3;
+      color: white;
+      font-size: 0.9em;
+      padding: 8px;
+      border-radius: 10px;
+      margin-bottom: 15px;
+      text-align: center;
+      cursor: pointer;
+    }
+
+    body.light-mode {
+      background-color: #f0f0f0;
+      background-image: none;
+    }
+
+    body.light-mode .calculator {
+      background: rgba(255, 255, 255, 0.9);
+    }
+
+    body.light-mode #display {
+      background: rgba(0, 0, 0, 0.1);
+      color: #000;
+    }
+
+    body.light-mode button {
+      background: rgba(0, 0, 0, 0.1);
+      color: black;
+    }
+
+    body.light-mode .operator {
+      background: #ff9800;
+      color: white;
+    }
+
+    body.light-mode .equals {
+      background: #4caf50;
+      color: white;
+    }
+
+    body.light-mode .clear {
+      background: #f44336;
+      color: white;
+    }
+  </style>
+</head>
+<body>
+  <div class="calculator">
+    <div class="mode-toggle" onclick="toggleTheme()">🌙 Toggle Light/Dark</div>
+    <input type="text" id="display" disabled />
+    <div class="buttons">
+      <button title="7" onclick="appendValue('7')">7</button>
+      <button title="8" onclick="appendValue('8')">8</button>
+      <button title="9" onclick="appendValue('9')">9</button>
+      <button class="operator" title="Divide" onclick="appendValue('/')">÷</button>
+
+      <button title="4" onclick="appendValue('4')">4</button>
+      <button title="5" onclick="appendValue('5')">5</button>
+      <button title="6" onclick="appendValue('6')">6</button>
+      <button class="operator" title="Multiply" onclick="appendValue('*')">×</button>
+
+      <button title="1" onclick="appendValue('1')">1</button>
+      <button title="2" onclick="appendValue('2')">2</button>
+      <button title="3" onclick="appendValue('3')">3</button>
+      <button class="operator" title="Subtract" onclick="appendValue('-')">−</button>
+
+      <button title="0" onclick="appendValue('0')">0</button>
+      <button title="Decimal" onclick="appendValue('.')">.</button>
+      <button class="equals" title="Calculate" onclick="calculate()">=</button>
+      <button class="operator" title="Add" onclick="appendValue('+')">+</button>
+
+      <button title="Clear" class="clear" onclick="clearDisplay()">C</button>
+      <button title="Delete Last" onclick="deleteLast()">⌫</button>
+      <button title="Left Parenthesis" onclick="appendValue('(')">(</button>
+      <button title="Right Parenthesis" onclick="appendValue(')')">)</button>
+    </div>
+  </div>
+
+  <script>
+    const display = document.getElementById('display');
+
+    function appendValue(value) {
+      display.value += value;
+    }
+
+    function clearDisplay() {
+      display.value = '';
+    }
+
+    function deleteLast() {
+      display.value = display.value.slice(0, -1);
+    }
+
+    function calculate() {
+      try {
+        const result = eval(display.value);
+        display.value = Number.isFinite(result)
+          ? Math.round(result * 10000) / 10000
+          : 'Error';
+      } catch {
+        display.value = 'Error';
+      }
+    }
+
+    document.addEventListener('keydown', (e) => {
+      const key = e.key;
+      if (!isNaN(key) || "+-*/().".includes(key)) {
+        appendValue(key);
+      } else if (key === 'Enter') {
+        calculate();
+      } else if (key === 'Backspace') {
+        deleteLast();
+      } else if (key.toLowerCase() === 'c') {
+        clearDisplay();
+      }
+    });
+
+    function toggleTheme() {
+      document.body.classList.toggle('light-mode');
+    }
+  </script>
+</body>
+</html>
